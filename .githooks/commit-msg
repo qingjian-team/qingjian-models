@@ -8,7 +8,7 @@ fi
 types='feat|fix|docs|build|ci|chore|refactor|style|revert'
 if [[ ! "$subject" =~ ^($types)(\([a-z0-9._/-]+\))?!?:\ [^[:space:]] ]]; then
   cat >&2 <<MSG
-提交信息第一行要是「<类型>(<范围>): <说明>」，范围写模型目录，例如 feat(zhiyi): 发布 1.4v2-long-l12
+提交信息第一行要是「<类型>(<范围>): <说明>」，范围写模型目录，例如 feat(zhiyi): 发布 v1.0.0
   类型：$types
   现在是：$subject
 约定见 docs/maintaining.md「提交信息」。

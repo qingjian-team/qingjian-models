@@ -3,7 +3,7 @@
 set -euo pipefail
 
 MODEL=${1:?模型名，即 models/ 下的目录，如 zhiyi、hanzhang/tongbian}
-VERSION=${2:?版本，如 1.4v2-long-l12}
+VERSION=${2:?版本号，主.次.修订，如 1.0.0}
 SOURCE=${3:?模型目录}
 PART_BYTES=$((95 * 1000 * 1000))
 
@@ -15,7 +15,8 @@ case "$MODEL" in
 esac
 
 ROOT=$(cd "$(dirname "$0")" && pwd)
-TAG="${MODEL//\//-}-$VERSION"
+[[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "版本号要是 主.次.修订：$VERSION" >&2; exit 1; }
+TAG="${MODEL//\//-}-v$VERSION"
 OUT="$ROOT/dist/$TAG"
 STAGE=$(mktemp -d)
 trap 'rm -rf "$STAGE"' EXIT
@@ -40,8 +41,8 @@ done
 sha() { shasum -a 256 "$1" | cut -d' ' -f1; }
 size() { stat -f%z "$1" 2>/dev/null || stat -c%s "$1"; }
 {
-  printf '{\n  "model": "%s",\n  "version": "%s",\n  "archive": {"bytes": %s, "sha256": "%s"},\n  "parts": [\n' \
-    "$MODEL" "$VERSION" "$(size "$STAGE/$TAG.tar.gz")" "$(sha "$STAGE/$TAG.tar.gz")"
+  printf '{\n  "model": "%s",\n  "version": "%s",\n  "tag": "%s",\n  "archive": {"bytes": %s, "sha256": "%s"},\n  "parts": [\n' \
+    "$MODEL" "$VERSION" "$TAG" "$(size "$STAGE/$TAG.tar.gz")" "$(sha "$STAGE/$TAG.tar.gz")"
   first=1
   for ((i = 1; i < index; i++)); do
     part="$OUT/$TAG.tar.gz.part$i"
