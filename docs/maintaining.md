@@ -4,11 +4,12 @@
 
 ## 目录与标签
 
-模型按系列分目录：`models/zhiyi/`、`models/hanzhang/tongbian/`、`models/hanzhang/zhiwei/`。
+模型按系列分目录：`models/zhiyi/`、`models/zhiyi-onnx/`、`models/hanzhang/tongbian/`、`models/hanzhang/zhiwei/`。
+`zhiyi` 是 safetensors（macOS 用 candle 跑），`zhiyi-onnx` 是知意输入法发布的 int8 ONNX 原样转发（Windows 用 ONNX Runtime 跑），分词表与词表两边相同。
 每个目录至少有 `LICENSE`，打包时拷进压缩包。
 
 一个模型的一个版本对应一个 Release，标签是「目录把斜杠换成横杠」+ `-v` + 版本号：
-`zhiyi-v1.0.0`、`hanzhang-tongbian-v1.0.0`、`hanzhang-zhiwei-v1.0.0`。各模型分开发，更新一个不用重传别的。
+`zhiyi-v1.0.0`、`zhiyi-onnx-v1.0.0`、`hanzhang-tongbian-v1.0.0`、`hanzhang-zhiwei-v1.0.0`。各模型分开发，更新一个不用重传别的。
 
 版本号是「主.次.修订」：
 
@@ -25,7 +26,10 @@
 ```bash
 ./pack.sh zhiyi 1.0.0 "<模型目录>"
 ./pack.sh hanzhang/zhiwei 1.0.0 "<模型目录>"
+./pack.sh zhiyi-onnx 1.0.0 "<解开的 laya-zhen-long-l12-int8g.zip>"
 ```
+
+`zhiyi-onnx` 的来源是知意输入法 Release `model-zhen-long-l12` 的 `laya-zhen-long-l12-int8g.zip`；打包前核对 `laya.int8g.onnx` 的 SHA-256 与上游 `scripts/fetch_model.py` 里的 `ONNX_SHA256` 一致。
 
 `pack.sh` 只打运行要的文件（每个模型的清单写在脚本里），加上 `models/<模型>/LICENSE`，打成 tar.gz，按 95MB 切块，输出到 `dist/<标签>/`：
 

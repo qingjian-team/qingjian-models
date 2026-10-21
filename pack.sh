@@ -9,6 +9,7 @@ PART_BYTES=$((95 * 1000 * 1000))
 
 case "$MODEL" in
   zhiyi) FILES=(model.safetensors config.json tokenizer.json unified_vocab.json README.md) ;;
+  zhiyi-onnx) FILES=(laya.int8g.onnx tokenizer.json unified_vocab.json rl_agent_config.json) ;;
   hanzhang/tongbian) FILES=(hanzhang-tongbian-small.qjm) ;;
   hanzhang/zhiwei) FILES=(hanzhang-zhiwei-small.qjm) ;;
   *) echo "不认识的模型：$MODEL" >&2; exit 1 ;;
