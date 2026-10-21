@@ -1,0 +1,5 @@
+dist/
+*.safetensors
+*.qjm
+*.tar*
+.DS_Store

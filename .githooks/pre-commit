@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# 模型文件只发 Release 附件，不进 git：拦下超过 1MB 的文件。启用：git config core.hooksPath .githooks
+set -euo pipefail
+limit=$((1024 * 1024))
+status=0
+while IFS= read -r file; do
+  [ -f "$file" ] || continue
+  size=$(git cat-file -s ":$file")
+  if [ "$size" -gt "$limit" ]; then
+    echo "$file 有 $((size / 1024)) KB：模型文件发 Release 附件，不进仓库（见 docs/maintaining.md）" >&2
+    status=1
+  fi
+done < <(git diff --cached --name-only --diff-filter=ACMR)
+exit $status
