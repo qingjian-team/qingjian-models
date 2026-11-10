@@ -4,12 +4,13 @@
 
 ## 目录与标签
 
-模型按系列分目录：`models/zhiyi/`、`models/zhiyi-onnx/`、`models/hanzhang/tongbian/`、`models/hanzhang/zhiwei/`。
+模型按系列分目录：`models/lm/`、`models/zhiyi/`、`models/zhiyi-onnx/`、`models/hanzhang/tongbian/`、`models/hanzhang/zhiwei/`。
+`lm` 是青简语言模型 `lm.qj`（主仓库 `dict-convert bigram` 统计、`pack lm` 打包）。
 `zhiyi` 是 safetensors（macOS 用 candle 跑），`zhiyi-onnx` 是知意输入法发布的 int8 ONNX 原样转发（Windows 用 ONNX Runtime 跑），分词表与词表两边相同。
 每个目录至少有 `LICENSE`，打包时拷进压缩包。
 
 一个模型的一个版本对应一个 Release，标签是「目录把斜杠换成横杠」+ `-v` + 版本号：
-`zhiyi-v1.0.0`、`zhiyi-onnx-v1.0.0`、`hanzhang-tongbian-v1.0.0`、`hanzhang-zhiwei-v1.0.0`。各模型分开发，更新一个不用重传别的。
+`lm-v1.0.0`、`zhiyi-v1.0.0`、`zhiyi-onnx-v1.0.0`、`hanzhang-tongbian-v1.0.0`、`hanzhang-zhiwei-v1.0.0`。各模型分开发，更新一个不用重传别的。
 
 版本号是「主.次.修订」：
 
@@ -19,13 +20,15 @@
 
 上游自己的名字（如知意的 `1.4V2-Long-L12`）不进标签，写在 Release 说明里。
 
-含章·通变随安装包发（主仓库 `tools/release/data-bundle.sh` 把它打进产品数据包），这里的 Release 是它的出处，设置里不提供下载。
+随包的模型（语言模型、Linux 版的含章·通变）由主仓库 `tools/release/models.lock` 钉住标签与压缩包的 SHA-256，打包时 `tools/release/models-fetch.py` 从这里的 Release 下载、核对、解开。
+换随包模型的版本：发新 Release，再改主仓库的 `models.lock`。
 
 ## 打包
 
 ```bash
 ./pack.sh zhiyi 1.0.0 "<模型目录>"
 ./pack.sh hanzhang/zhiwei 1.0.0 "<模型目录>"
+./pack.sh lm 1.0.0 "<放 lm.qj 的目录>"
 ./pack.sh zhiyi-onnx 1.0.0 "<解开的 laya-zhen-long-l12-int8g.zip>"
 ```
 

@@ -2,7 +2,7 @@
 # 把一个模型目录打成 tar.gz、按 95MB 切块，写 manifest.json。用法见 docs/maintaining.md。
 set -euo pipefail
 
-MODEL=${1:?模型名，即 models/ 下的目录，如 zhiyi、hanzhang/tongbian}
+MODEL=${1:?模型名，即 models/ 下的目录，如 zhiyi、hanzhang/tongbian、lm}
 VERSION=${2:?版本号，主.次.修订，如 1.0.0}
 SOURCE=${3:?模型目录}
 PART_BYTES=$((95 * 1000 * 1000))
@@ -12,6 +12,7 @@ case "$MODEL" in
   zhiyi-onnx) FILES=(laya.int8g.onnx tokenizer.json unified_vocab.json rl_agent_config.json) ;;
   hanzhang/tongbian) FILES=(hanzhang-tongbian-small.qjm) ;;
   hanzhang/zhiwei) FILES=(hanzhang-zhiwei-small.qjm) ;;
+  lm) FILES=(lm.qj) ;;
   *) echo "不认识的模型：$MODEL" >&2; exit 1 ;;
 esac
 
