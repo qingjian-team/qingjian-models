@@ -25,6 +25,25 @@
 随包的模型（语言模型、Linux 版的含章·通变）由主仓库 `tools/release/models.lock` 钉住标签与压缩包的 SHA-256，打包时 `tools/release/models-fetch.py` 从这里的 Release 下载、核对、解开。
 换随包模型的版本：发新 Release，再改主仓库的 `models.lock`。
 
+## 清单 index.json
+
+设置程序每次打开时取一次仓库根目录的 `index.json`（Gitee 与 GitHub 同时取，先回来的用），「实验功能」里列出的模型就是它，取不到时用上次存下的那份。
+上架一个模型或一个新版本，就是发好 Release 后在这里加或改一条；不用发新版输入法，除非它要新的引擎格式。
+
+- `format`：清单本身的写法。改了字段的意思就加一，旧输入法看到读不懂的会提示更新。
+- 每个模型一条：
+  - `id`：装到下载目录的 `models/<id>/`，配置里也记这个。定了不改，升版本只改下面的 `version` 与各 `tag`。
+  - `name`、`description`：卡片的标题与说明。标题写上游的型号原文。
+  - `engine`：`zhiyi` 或 `hanzhang`，用哪套代码跑。
+  - `engine_format`：这套代码要认得的模型格式。同一引擎换了模型结构（如知意 1.4V2-Long-L12 是 1、zhen-feather 是 2）就加一；输入法认不得的显示「需要新版输入法」，不给下载。
+  - `version`：与 Release 标签里的版本号一致。
+  - `license`：SPDX 写法；`author`：名字与主页。
+  - `recommended`：卡片上的「推荐」，只改标签，不替用户换模型。没有就是不推荐。
+  - `deprecated`：弃用的不再给下载；已经装了的照样能用，卡片上标出来，删不删由用户。没有就是没弃用。
+  - `variants`：同一个模型给不同运行方式的包，输入法取自己能跑的那个：`runtime` 是 `candle`（safetensors 与 `.qjm`）或 `onnx`；`tag` 是 Release 标签；`archive_dir` 是压缩包里那一层目录；`bytes` 是拼好的整个压缩包的字节数，照抄 `manifest.json` 的 `archive.bytes`。
+
+清单只写怎么找、怎么显示；文件对不对仍按每个 Release 的 `manifest.json` 核对。
+
 ## 打包
 
 ```bash
