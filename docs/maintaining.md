@@ -4,9 +4,11 @@
 
 ## 目录与标签
 
-模型按系列分目录：`models/lm/`、`models/zhiyi/`、`models/zhiyi-onnx/`、`models/hanzhang/tongbian/`、`models/hanzhang/zhiwei/`。
+模型按系列分目录：`models/lm/`、`models/zhiyi/`、`models/zhiyi-onnx/`、`models/zhiyi-feather/`、`models/zhiyi-feather-onnx/`、`models/hanzhang/tongbian/`、`models/hanzhang/zhiwei/`。
 `lm` 是青简语言模型 `lm.qj`（主仓库 `dict-convert bigram` 统计、`pack lm` 打包）。
 `zhiyi` 是 safetensors（macOS 用 candle 跑），`zhiyi-onnx` 是知意输入法发布的 int8 ONNX 原样转发（Windows 用 ONNX Runtime 跑），分词表与词表两边相同。
+知意的几条模型线各占一组目录，用户在输入法里选用哪个，同时在线：`zhiyi` / `zhiyi-onnx` 是 1.4V2-Long-L12，`zhiyi-feather` / `zhiyi-feather-onnx` 是 zhen-feather。
+上游同一条线出新版（feather 的下一版）在原目录升次版本；新的一条线另开目录。转发只带青简运行要的文件，不带上游的 `candle_ref/`（GPL-3.0-only）、测试向量与联想用的图。
 每个目录至少有 `LICENSE`，打包时拷进压缩包。
 
 一个模型的一个版本对应一个 Release，标签是「目录把斜杠换成横杠」+ `-v` + 版本号：
@@ -33,6 +35,8 @@
 ```
 
 `zhiyi-onnx` 的来源是知意输入法 Release `model-zhen-long-l12` 的 `laya-zhen-long-l12-int8g.zip`；打包前核对 `laya.int8g.onnx` 的 SHA-256 与上游 `scripts/fetch_model.py` 里的 `ONNX_SHA256` 一致。
+`zhiyi-feather` / `zhiyi-feather-onnx` 的来源是知意模型仓库（dd1000001000/zhiyi_models）的 Release，`-safetensors.zip` 与 `-int8g.zip`；
+打包前核对 `model.safetensors`、`laya.int8g.onnx` 的 SHA-256 与那个 Release 说明里列的一致（Hugging Face `zhiyi-ime/` 下同名仓库是同一份权重）。
 
 `pack.sh` 只打运行要的文件（每个模型的清单写在脚本里），加上 `models/<模型>/LICENSE`，打成 tar.gz，按 95MB 切块，输出到 `dist/<标签>/`：
 
